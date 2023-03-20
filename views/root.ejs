@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+  <title>E-Commerce-CQ</title>
+</head>
+<style>
+  html {
+  scroll-behavior: smooth;
+  }
+  .img-small {
+    width: 20%;
+    height: 20%;
+    align-self: center;
+    margin-top: 4vh;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #ffdbdb;
+    margin: auto;
+    padding: 0;
+    border: 3px solid #ebf4b3;
+    border-radius: 20%;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {
+      top: -300px;
+      opacity: 0
+    }
+
+    to {
+      top: 0;
+      opacity: 1
+    }
+  }
+
+  @keyframes animatetop {
+    from {
+      top: -300px;
+      opacity: 0
+    }
+
+    to {
+      top: 0;
+      opacity: 1
+    }
+  }
+
+  /* The Close Button */
+  .close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .modal-body {
+    padding: 2px 16px;
+  }
+</style>
+
+<body style="background-color: rgb(237, 205, 197);">
+  <%if(name.length>2){ %>
+    <% name=JSON.parse(name) %>
+      <%- include('head',{name:name,item:0}) %>
+        <%}else{%>
+          <%- include('header',{name:JSON.parse(name)}) %>
+            <% } %>
+              <!-- Modal starts here  -->
+              <div id="myModal" class="modal">
+                <!-- <div class="modal-content">
+              <div class="modal-body">
+                <p>Some text in the Modal Body</p>
+                <p>Some other text...</p>
+              </div>
+            </div> -->
+              </div>
+              <!-- Modal ends here  -->
+              <% size=parseInt(size) %>
+              <div class="container d-flex justify-content-start">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" onclick="sortProduct(this)">Random</a>
+                    <a class="dropdown-item" onclick="sortProduct(this)">Highest To Lowest</a>
+                    <a class="dropdown-item" onclick="sortProduct(this)">Lowest to Highest</a>
+                  </div>
+                </div>
+              </div>
+                <div>
+                  <div class="container-fluid" id="toadd1">
+                    <div class="row" id="main">
+                      <% for(let i=0;i<size;i++){ %>
+                        <div>
+                          <div class="card mx-2 my-1" style="background-color: #f9cdbd8f; width: 18rem;">
+                            <input type="hidden" value="<%= products[i].id%>">
+                            <img class="card-img-top mb-2" src=<%=products[i].image %> alt="Card image cap" height="200"
+                            style = "padding:3vh;">
+                            <div class="card-body">
+                              <h5 class="card-title">
+                                <%= products[i].name %>
+                              </h5>
+                              <p class="card-text">
+                                <%= products[i].details %>
+                              </p>
+                              <p class="card-text">
+                                $ <%= products[i].price %>
+                              </p>
+                              <a><button class="btn btn-sm btn-primary detailBtn" onclick="showModal(this)">View
+                                  Details</button></a>
+                              <a href="/addtocart/<%=products[i].id%>"><button
+                                  class="btn btn-danger btn-sm">Cart+</button>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <% } %>
+                    </div>
+                  </div>
+                  
+                  <div class="container-fluid">
+                    <div class="row" id="toadd">
+  
+                    </div>
+                  </div>
+                </div>
+                <div class="container-fluid my-5 ml-3"><button id="showMore" onclick="nextProducts(this)"
+                  class="btn btn-sm btn-success">Show More</button>
+                  
+                </div>
+                <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+                  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                  crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+                  integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+                  crossorigin="anonymous"></script>
+                <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+                <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+                <!-- Script starts here  -->
+                <script>
+                  console.log("Hello meeting")
+                  console.log(document.getElementById('toadd1').childElementCount)
+                  // Modal script starts
+                  let modal = document.getElementById("myModal");
+                  let btn = document.getElementsByClassName("detailBtn");
+                  let toadd = document.getElementById("toadd");
+                  let toadd1 = document.getElementById("toadd1");
+                  let main = document.getElementById("main");
+                  console.log(toadd.childElementCount)
+                  function showModal(e) {
+                    let rate = e.parentElement.previousElementSibling.textContent;
+                    let detail = e.parentElement.previousElementSibling.previousElementSibling.textContent;
+                    let title = e.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
+                    let imgSrc = e.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.parentElement.previousElementSibling.src;
+                    let productId = e.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.parentElement.previousElementSibling.previousElementSibling.value;
+                    let mydiv = document.createElement('div');
+                    modal.innerHTML = "";
+                    mydiv.innerHTML = `
+                  <div class="modal-content">
+                    <span class="close" onclick="closeModal(this)">&times;</span>
+                    <input type="hidden" value="${productId}">
+                    <img class="card-img-top mb-2 img-small" src="${imgSrc}" alt="Card image cap" width = "50" >
+                    <div class="modal-body text-center p-2">
+                    <p>${title}</p>
+                    <p>${detail}</p>
+                    <p>${rate}</p>
+                    <a href="/addtocart/${productId}"><button class="btn btn-danger btn-sm">Cart+</button></a>
+                    </div>
+                  </div>
+               `
+                    modal.appendChild(mydiv)
+                    modal.style.display = "block";
+                  }
+                  let span = document.getElementsByClassName("close")[0];
+                  function closeModal(e) {
+                    console.log(e);
+                    modal.style.display = "none";
+                  }
+                  window.onclick = function (event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                  let moreProducts = 1;
+                  function nextProducts(e) {
+                    let value = { quantity: moreProducts}
+                    var request = new XMLHttpRequest();
+                    request.open("post", "/getproducts");
+                    request.setRequestHeader("Content-type", "application/json");
+                    request.send(JSON.stringify(value));
+                    moreProducts++;
+                    request.addEventListener('load', () => {
+                      setProducts(JSON.parse(request.responseText));
+                    })
+                  }
+                  function sortProduct(e)
+                  {
+                    console.log("Clicked",e.textContent)
+                    // console.log(toadd.childElementCount)
+                    // console.log(main.childElementCount)
+                    let limit = toadd.childElementCount + main.childElementCount;
+                    if(limit > 4)
+                    {
+                      limit = limit - 4;
+                    }
+                    let value = {quantity:null,limit:limit}
+                    if(e.textContent=="Highest To Lowest")
+                    {
+                      console.log("Sort According to Descending");
+                      value.quantity = 1;
+                    } 
+                    else if(e.textContent=="Lowest to Highest")
+                    {
+                      console.log("Sort According to Ascending");
+                      value.quantity = -1;
+                    }
+                    else if(e.textContent=="Random")
+                    {
+                      console.log("Random order");
+                      value.quantity = 0;
+                    }
+                    var request = new XMLHttpRequest();
+                    request.open("post", "/sortProducts");
+                    request.setRequestHeader("Content-type", "application/json");
+                    request.send(JSON.stringify(value));
+                    request.addEventListener('load', () => {
+                      toadd1.innerHTML = "";
+                      toadd.innerHTML = "";
+                      console.log(JSON.parse(request.responseText))
+                      setProducts(JSON.parse(request.responseText));
+                    })
+
+                  }
+                  function setProducts(products) {
+                    if (products.length) {
+                      products.forEach((e) => {
+                        let div1 = document.createElement('div');
+                        div1.innerHTML = `
+                          <div>
+                            <div class="card mx-2 my-1" style="background-color: #f9cdbd8f; width: 18rem;">
+                              <input type="hidden" value="${e.id}">
+                              <img class="card-img-top mb-2" src="${e.image}" alt="Card image cap" height="200"
+                              style = "padding:3vh;">
+                              <div class="card-body">
+                                <h5 class="card-title">
+                                ${e.name}
+                                </h5>
+                                <p class="card-text">
+                                  ${e.details}
+                                </p>
+                                <p class="card-text">
+                                  $ ${e.price}
+                                </p>
+                                <a><button class="btn btn-sm btn-primary detailBtn" onclick="showModal(this)">View
+                                    Details</button></a>
+                                <a href="/addtocart/${e.id}"><button
+                                    class="btn btn-danger btn-sm">Cart+</button>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                          `
+                          toadd.appendChild(div1);
+                      })
+                    }
+                  }
+
+                </script>
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta
+        name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+        <title>E-Commerce-CQ</title>
+    </head>
+    <style>
+        .mysearch{
+            width: 15vw;
+        }
+        #success {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #94dbd7;
+            color: #000000;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+        }
+
+        #success.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        #Error {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #ff5858;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+        }
+
+        #Error.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+        @media only screen and (max-width: 600px) {
+            body {
+                background-color: rgb(0, 97, 114);
+            }
+            .mysearch {
+                width: 65vw;
+            }
+            .ml-5, .mx-5 {
+                margin-left: 17px !important;
+            }
+        }
+    </style>
+    <body style="background-color: aliceblue;">
+        <%if(name.length>2){ %>
+            <% name = JSON.parse(name) %>
+            <%- include('head',{name:name,item:products.length})  %>
+        <%}else{%>
+            <%- include('header',{name:JSON.parse(name)})  %>
+        <% } %>
+        <div id="success">Added to Final Order list</div>
+        <div id="Error">Could Not Update the data</div>
+        <div class="container d-flex justify-content-end">
+            <input class="form-control mr-sm-2 mysearch" name="search" type="search" placeholder="Search" aria-label="Search" id="search">
+            <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchBtn(this)">Search</button>
+        </div>
+        <div class="container">
+            <h3 class="text-justify">Your Cart</h3>
+            <div class="container d-flex justify-content-between">
+                <a href="/">
+                    <button class="btn btn-warning my-3">Go to Home</button>
+                </a>
+                <% if(products.length>0){ %>
+                <a href="/checkOut">
+                    <button class="btn btn-info my-3">CheckOut</button>
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <% if(products.length>0){ %>
+            <div class="container-fluid mb-5" id="originalCart">
+                <div class="row mx-5" id="originalCart">
+                    <% products.forEach((p)=>{  %>
+                        <div class="mt-3 mx-2">
+                            <div class="card border border-warning" style="width: 15rem;">
+                                <% if(p.isForOrder) {%>
+                                    <div class="container d-flex justify-content-start mt-2"><input type="checkbox" value="<%= p.pId %>" onclick="markForOrder(this)" checked></div>
+                                <% }else{ %>
+                                    <div class="container d-flex justify-content-start mt-2"><input type="checkbox" value="<%= p.pId %>" onclick="markForOrder(this)"></div>
+                                <% } %>
+                                <a href="/openProduct/<%= p.pId %>"><img src="<%= p.image %>" class="card-img-top" alt="<%= p.image %>" height="200" style="padding: 5vh;"></a>
+                                <div class="card-body">
+                                    <h5 class="card-title mt-5"><%= p.pname %></h5>
+                                    <h5 class="card-title">$
+                                        <%= p.price %></h5>
+                                    <span>Quantity:-</span>
+                                    <span id="quantity">
+                                        <%= p.quantity %></span>
+                                    <br>
+                                    <br>
+                                    <input type="hidden" value="<%= p.pId %>" style="width: 4rem;">
+                                    <a href="/increase/<%= p.pId %>/<%= p.quantity %>/1">
+                                        <ion-icon name="add-circle-outline" style="height: 3vh; width: 3vw;"></ion-icon>
+                                    </a>
+                                    <a href="/increase/<%= p.pId %>/<%= p.quantity %>/2">
+                                        <ion-icon name="remove-circle-outline" style="height: 3vh; width: 3vw;"></ion-icon>
+                                    </a>
+                                    <a href="/deleteitem/<%= p.pId %>">
+                                        <ion-icon name="trash-outline" style="height: 3vh; width: 3vw;"></ion-icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% }else{ %>
+            <div class="container mx-5">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+                <p>No Product Found !!!
+                </p>
+            </div>
+        <% } %>
+        <div class="container-fluid">
+            <div class="row mx-5" id="searchAdd"></div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+        <script>
+            let search = document.getElementById('search');
+            let originalCart = document.getElementById('originalCart');
+            let searchAdd = document.getElementById('searchAdd');
+            search.addEventListener('keyup', (e) => {
+                console.log(search.value.length)
+                if (search.value.length == 0) {
+                    originalCart.style.display = "block";
+                    searchAdd.innerHTML = ""
+                }
+            })
+            function searchBtn(e) {
+                console.log(search.value)
+                let searchVal = search.value;
+                let request = new XMLHttpRequest();
+                request.open("post", "/searchCart");
+                request.setRequestHeader("Content-type", "application/json");
+                request.send(JSON.stringify({value: searchVal}));
+                request.addEventListener('load', () => {
+                    originalCart.style.display = "none";
+                    showProducts(JSON.parse(request.responseText));
+                })
+            }
+            function showProducts(products) {
+                console.log(products.length)
+                if (products.length == 0) {
+                    let mydiv = document.createElement('div');
+                    mydiv.innerHTML = `            <div class="container">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+                <p>Seem's Like you have nothing in your cart
+                </p>
+                <p>Add something to start shopping!!!!</p>
+                <p>
+                    <a href="/">Add Some Products</a>
+                </p>
+            </div>`
+                    searchAdd.innerHTML = ""
+                    searchAdd.appendChild(mydiv)
+                } else {
+
+                    products.forEach((p) => {
+                        let mydiv = document.createElement('div');
+                        mydiv.innerHTML = `
+      <div class="mt-3 mx-2">
+        <div class="card border border-warning" style="width: 15rem;">
+            <div class="container d-flex justify-content-start mt-2"><input type="checkbox" value="${ p.pId }" onclick="markForOrder(this)"></div>
+                <a href="/openProduct/${
+                            p.pId
+                        }"><img src="${
+                            p.image
+                        }" class="card-img-top" alt="${
+                            p.image
+                        }" height="200" style = "padding: 5vh;"></a>
+                <div class="card-body">
+                  <h5 class="card-title mt-5">${
+                            p.pname
+                        }</h5>
+                  <h5 class="card-title">$ ${
+                            p.price
+                        }</h5>
+                  <span>Quantity:-</span><span id="quantity"> ${
+                            p.quantity
+                        }</span>
+                  <br>
+                  <br>
+                  <input type="hidden" value="${
+                            p.pId
+                        }" style="width: 4rem;">
+                  <a href="/increase/${
+                            p.pId
+                        }/${
+                            p.quantity
+                        }/1"><ion-icon name="add-circle-outline" style="height: 3vh; width: 3vw;"></ion-icon></a>
+                  <a href="/increase/${
+                            p.pId
+                        }/${
+                            p.quantity
+                        }/2" ><ion-icon name="remove-circle-outline" style="height: 3vh; width: 3vw;"></ion-icon></a>
+                  <a href="/deleteitem/${
+                            p.pId
+                        }" ><ion-icon name="trash-outline" style="height: 3vh; width: 3vw;"></ion-icon></a>
+                </div>
+              </div>
+            </div>
+      `
+                        searchAdd.appendChild(mydiv)
+                    })
+                }
+            }
+            function showSuccess() {
+                let x = document.getElementById("success");
+                x.className = "show";
+                setTimeout(function () {
+                    x.className = x.className.replace("show", "");
+                }, 3000);
+            }
+            function showError() {
+                let x = document.getElementById("Error");
+                x.className = "show";
+                setTimeout(function () {
+                    x.className = x.className.replace("show", "");
+                }, 3000);
+            }
+            // function for markForOrder
+            function markForOrder(e) {
+                let request = new XMLHttpRequest();
+                request.open("post", "/markForOrder");
+                request.setRequestHeader("Content-type", "application/json");
+                let toMark = {
+                    pId:null,
+                    toCheck:null
+                }
+                if(e.checked)
+                {
+                    toMark.pId = e.value;
+                    toMark.toCheck = true;
+                    let success = document.getElementById("success");
+                    success.innerHTML = "";
+                    success.innerHTML = "Added to final order list"
+                }   
+                else
+                {
+                    toMark.pId = e.value;
+                    toMark.toCheck = false;
+                    let success = document.getElementById("success");
+                    success.innerHTML = "";
+                    success.innerHTML = "Removed from final order list"
+                }
+                // console.log(toMark)
+                request.send(JSON.stringify(toMark));
+                request.addEventListener('load', () => {
+                    if(JSON.parse(request.responseText).status==1)
+                    {
+                        showSuccess();
+                    }
+                    else{
+                        showError();
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>

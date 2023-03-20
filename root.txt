@@ -1,0 +1,52 @@
+<% if(size<=20){ %>
+                      <% for(let i=0;i<size;i++){ %>
+                        <div>
+                          <div class="card mx-2 my-1" style="background-color: #f9cdbd8f; width: 18rem;">
+                            <input type="hidden" value="<%= products[i].id%>">
+                            <img class="card-img-top mb-2" src=<%=products[i].image %> alt="Card image cap" height="200"
+                            style = "padding:3vh;">
+                            <div class="card-body">
+                              <h5 class="card-title">
+                                <%= products[i].name %>
+                              </h5>
+                              <p class="card-text">
+                                <%= products[i].details %>
+                              </p>
+                              <p class="card-text">
+                                $ <%= products[i].price %>
+                              </p>
+                              <a><button class="btn btn-sm btn-primary detailBtn" onclick="showModal(this)">View
+                                  Details</button></a>
+                              <a href="/addtocart/<%=products[i].id%>"><button
+                                  class="btn btn-danger btn-sm">Cart+</button>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <% } %>
+                          <% }else{ %>
+                            <% for(let i=0;i<20;i++){ %>
+                              <div>
+                                <div class="card mx-2 my-1" style="background-color: #f9cdbd8f; width: 18rem;">
+                                  <input type="hidden" value="<%= products[i].id%>">
+                                  <img class="card-img-top mb-2" src=<%=products[i].image %> alt="Card image cap"
+                                  height="200" style = "padding:3vh;">
+                                  <div class="card-body">
+                                    <h5 class="card-title">
+                                      <%= products[i].name %>
+                                    </h5>
+                                    <p class="card-text">
+                                      <%= products[i].details %>
+                                    </p>
+                                    <p class="card-text">
+                                      $ <%= products[i].price %>
+                                    </p>
+                                    <a><button class="btn btn-sm btn-primary detailBtn" onclick="showModal(this)">View
+                                        Details</button></a>
+                                    <a href="/addtocart/<%=products[i].id%>/"><button
+                                        class="btn btn-danger btn-sm">Cart+</button></a>
+                                  </div>
+                                </div>
+                              </div>
+                              <% } %>
+                                <% } %>

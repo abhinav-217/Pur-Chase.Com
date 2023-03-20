@@ -1,0 +1,54 @@
+const express = require('express')
+const app = express()
+const port = 3000
+const getProductDb = require('./DbConnect/getProductDb');
+
+app.get('/', async (req, res) => {
+    let data = await getProductDb();
+    data = await data.find().toArray();
+    res.send(data)
+})
+app.get('/insert', async (req, res) => {
+    let data = await getProductDb();
+    let query = {
+        "id": 21,
+        "name": "Nokia",
+        "image": `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ4YaRH0oizFGzcWIpjfo__7YI1n84EdD-CQ&usqp=CAU`,
+        "price": 99,
+        "details": "The Unbreakable phone is here at just Rs 99 Hurry up!!!"
+    }
+    let result = await data.insertOne(query)
+    res.send(result);
+})
+app.get('/update', async (req, res) => {
+  let data = await getProductDb();
+  let body = {
+    name:"Nokia 1100",
+    image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ4YaRH0oizFGzcW…",
+    price:10,
+    details: "The Unbreakable phone is here at just Rs 99 Hurry up!!!"
+  }
+
+  let result = data.updateOne(
+    {name:"Nokia"},
+    {$set:body}
+  )
+  res.send(body);
+})
+app.get('/delete', async (req, res) => {
+  let data = await getProductDb();
+  let arr = await data.find().toArray();
+  let result = [];
+  arr.forEach((d)=>{
+    if(d.id==20)
+    {
+      result = d;
+    }
+  })
+  let dlt = await data.deleteOne({id:21});
+  res.send(result);
+})
+
+app.listen(port, () => {
+  console.log(`http://localhost:${port}/`)
+})
